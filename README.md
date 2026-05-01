@@ -8,6 +8,62 @@ This project compares two image denoising methods for the GNR 630 course:
 The project adds uniform noise to an image, denoises it using both methods, and compares the results using mean squared error (MSE).
 It also reports structure and texture preservation metrics so you can judge whether texturedness is preserved.
 
+## Quick start (how to run)
+
+These steps assume you have unzipped the project (or cloned the repo) and opened a terminal **in the project root folder** (the directory that contains `app.py`, `requirements.txt`, and `README.md`).
+
+1. **Check Python** (3.9 or newer recommended):
+
+   ```bash
+   python3 --version
+   ```
+
+   On Windows, if `python3` is not found, try `python --version`.
+
+2. **Create a virtual environment** (keeps packages isolated from your system Python):
+
+   **macOS / Linux**
+
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+   **Windows (Command Prompt or PowerShell)**
+
+   ```bat
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+   After activation, your prompt usually shows `(.venv)`.
+
+3. **Upgrade pip and install dependencies**:
+
+   ```bash
+   python -m pip install --upgrade pip
+   python -m pip install -r requirements.txt
+   ```
+
+4. **Launch the app** (recommended):
+
+   ```bash
+   streamlit run app.py
+   ```
+
+   Streamlit prints a local URL (typically `http://localhost:8501`). Open it in your browser. To stop the server, press `Ctrl+C` in the terminal.
+
+5. **Optional — Jupyter notebook**: install Jupyter in the same environment, then start it from the project folder:
+
+   ```bash
+   python -m pip install notebook jupyterlab ipywidgets
+   jupyter notebook
+   ```
+
+   Open `main_project.ipynb` and run cells in order.
+
+If anything fails, see [Troubleshooting](#troubleshooting) below.
+
 ## Project Goals
 
 - Add uniform noise to grayscale or color images
@@ -40,56 +96,61 @@ It also reports structure and texture preservation metrics so you can judge whet
 - Streamlit UI with upload support and built-in sample images
 - Optional MSE vs. k curve for analysis
 
-## Setup
+## Setup (detailed)
 
-### 1. Create and activate the virtual environment
+### Prerequisites
 
-From the project folder:
+- **Python** 3.9+ installed and available as `python3` (macOS/Linux) or `python` (Windows).
+- Internet access the **first time** you run `pip install`, to download packages.
+
+### Virtual environment (recommended)
+
+Always activate the same `.venv` before running `streamlit` or `jupyter` so imports resolve correctly.
+
+| Step | macOS / Linux | Windows |
+|------|-----------------|---------|
+| Create venv | `python3 -m venv .venv` | `python -m venv .venv` |
+| Activate | `source .venv/bin/activate` | `.venv\Scripts\activate` |
+| Deactivate (when done) | `deactivate` | `deactivate` |
+
+The folder `.venv` is listed in `.gitignore`; it is created locally and is not required to exist in the zip/repo for the instructions to work.
+
+### Install dependencies
+
+From the project root, with the venv **activated**:
 
 ```bash
-cd "/Users/vaibhavrathore1999/Desktop/PhD/Courses/GNR 630 /Project"
-python3 -m venv .venv
-source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-### 2. Install dependencies
+For the notebook only, additionally:
 
 ```bash
-pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install notebook jupyterlab ipywidgets
 ```
 
-If you want to use the notebook, also make sure Jupyter is available:
+## How to run
+
+### Option 1: Streamlit app (recommended)
+
+With the venv activated and your terminal’s current directory set to the project root:
 
 ```bash
-pip install notebook jupyterlab ipykernel
-```
-
-## How to Run
-
-### Option 1: Run the Streamlit app
-
-This is the recommended option because it is faster and easier to use.
-
-```bash
-cd "/Users/vaibhavrathore1999/Desktop/PhD/Courses/GNR 630 /Project"
-source .venv/bin/activate
 streamlit run app.py
 ```
 
-Then open the local URL shown in the terminal.
+Use the URL shown in the terminal. No extra configuration is required.
 
-### Option 2: Use the notebook
+### Option 2: Jupyter notebook
 
 ```bash
-cd "/Users/vaibhavrathore1999/Desktop/PhD/Courses/GNR 630 /Project"
-source .venv/bin/activate
 jupyter notebook
 ```
 
-Open `main_project.ipynb` in the browser and run the cells in order.
+Open `main_project.ipynb` and run cells top to bottom.
 
-## How to Use the Streamlit App
+## How to use the Streamlit app
 
 1. Choose the input source on the left sidebar:
    - `Sample image` for built-in test images
@@ -110,7 +171,7 @@ Open `main_project.ipynb` in the browser and run the cells in order.
    - Runtime values
 5. Optionally enable `Show MSE vs k curve` for analysis
 
-## Notes on the Implementation
+## Notes on the implementation
 
 - The project uses a local-window intensity-based kNN smoothing approach.
 - The averaging filter uses a standard mean filter with the same window size.
@@ -120,7 +181,7 @@ Open `main_project.ipynb` in the browser and run the cells in order.
 - Texture is analyzed via GLCM properties on grayscale representations.
 - The Streamlit app includes an image resizing control to keep execution fast on larger inputs.
 
-## Suggested Workflow for the Course
+## Suggested workflow for the course
 
 1. Start with the Streamlit app to verify the pipeline quickly
 2. Test on sample images first
@@ -131,7 +192,7 @@ Open `main_project.ipynb` in the browser and run the cells in order.
 
 ## Dependencies
 
-Main packages used:
+Main packages (see `requirements.txt`):
 
 - numpy
 - pillow
@@ -140,11 +201,11 @@ Main packages used:
 - matplotlib
 - streamlit
 
-## Course Reference
+## Course reference
 
 This project is prepared for **GNR 630**.
 
-## Expected Output
+## Expected output
 
 The project should show:
 
@@ -160,16 +221,11 @@ The project should show:
 
 ## Troubleshooting
 
-- If Streamlit is not found, make sure the virtual environment is activated.
-- If the app is slow, reduce the max image dimension in the sidebar.
-- If notebook widgets do not show correctly, ensure ipywidgets is installed in the active environment.
-- If you upload a file and nothing happens, try using a sample image first to confirm the pipeline works.
+- **`streamlit: command not found`** — Activate `.venv` first, or run `python -m streamlit run app.py` from the project root.
+- **`python3` not found (Windows)** — Use `python` instead of `python3` for venv creation and pip.
+- **`pip` installs to the wrong Python** — Use `python -m pip install -r requirements.txt` so pip matches the interpreter you will use to run the app.
+- **Browser does not open automatically** — Copy the `http://localhost:8501` (or similar) URL from the terminal into your browser manually.
+- **App feels slow** — Lower **Max image dimension** in the sidebar.
+- **Notebook widgets misbehave** — Install `ipywidgets` in the active environment and restart the kernel.
+- **Upload does nothing** — Try a built-in sample image first to confirm the pipeline works.
 
-## Authoring Notes
-
-If you want to extend the project later, good additions are:
-
-- Save output images to `data/results/`
-- Add more sample images to `data/sample_images/`
-- Add a results table or CSV export
-- Add a short presentation summary section with screenshots and conclusions

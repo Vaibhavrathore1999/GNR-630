@@ -3,3 +3,4 @@ __pycache__/
 plan.md
 presentation_online.md
 data/
+.DS_Store
