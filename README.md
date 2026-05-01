@@ -6,6 +6,7 @@ This project compares two image denoising methods for the GNR 630 course:
 - Simple averaging filter
 
 The project adds uniform noise to an image, denoises it using both methods, and compares the results using mean squared error (MSE).
+It also reports structure and texture preservation metrics so you can judge whether texturedness is preserved.
 
 ## Project Goals
 
@@ -32,6 +33,10 @@ The project adds uniform noise to an image, denoises it using both methods, and 
 - Averaging filter with the same window size for fair comparison
 - Support for grayscale and RGB images
 - MSE comparison between original, noisy, and filtered images
+- Gradient inverse smoothing ratio (Sobel gradient retention)
+- Edge contrast ratio (robust Sobel contrast retention)
+- GLCM texture parameter comparison (contrast, dissimilarity, homogeneity, energy, correlation)
+- Per-metric texturedness-preservation verdicts for kNN and averaging outputs
 - Streamlit UI with upload support and built-in sample images
 - Optional MSE vs. k curve for analysis
 
@@ -100,6 +105,8 @@ Open `main_project.ipynb` in the browser and run the cells in order.
    - Noisy image
    - kNN output and MSE
    - Averaging filter output and MSE
+   - Gradient inverse smoothing and edge contrast values
+   - GLCM table and per-metric texturedness-preservation verdicts
    - Runtime values
 5. Optionally enable `Show MSE vs k curve` for analysis
 
@@ -108,6 +115,9 @@ Open `main_project.ipynb` in the browser and run the cells in order.
 - The project uses a local-window intensity-based kNN smoothing approach.
 - The averaging filter uses a standard mean filter with the same window size.
 - MSE is computed against the original clean image, not just the noisy image.
+- Gradient inverse smoothing is computed as Sobel gradient retention ratio.
+- Edge contrast is computed using robust Sobel spread ratios.
+- Texture is analyzed via GLCM properties on grayscale representations.
 - The Streamlit app includes an image resizing control to keep execution fast on larger inputs.
 
 ## Suggested Workflow for the Course
@@ -143,6 +153,9 @@ The project should show:
 - kNN denoised image
 - Averaging filter image
 - MSE values for comparison
+- Gradient inverse smoothing values
+- Edge contrast values
+- GLCM parameter comparison and texturedness-preservation verdicts
 - Runtime comparison
 
 ## Troubleshooting

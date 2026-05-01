@@ -33,6 +33,7 @@ with st.sidebar:
     seed = st.number_input("Random seed", min_value=0, max_value=999999, value=42, step=1)
     show_curve = st.checkbox("Show MSE vs k curve", value=False)
     curve_max_k = st.slider("Curve max k", 3, 31, 15, 2)
+    show_advanced = st.checkbox("Show gradient/edge/texture metrics", value=True)
     run_button = st.button("Run denoising", type="primary")
 
 
@@ -89,6 +90,55 @@ if run_button:
     st.write("Runtime")
     st.write(f"kNN: {result.knn_time:.3f} s")
     st.write(f"Average: {result.average_time:.3f} s")
+
+    if show_advanced:
+        st.subheader("Advanced Structure and Texture Metrics")
+
+        adv_cols = st.columns(2)
+        with adv_cols[0]:
+            st.markdown("**Gradient Inverse Smoothing (Sobel retention ratio)**")
+            st.write(f"Noisy: {result.gradient_inverse_noisy:.4f}")
+            st.write(f"kNN: {result.gradient_inverse_knn:.4f}")
+            st.write(f"Average: {result.gradient_inverse_average:.4f}")
+
+        with adv_cols[1]:
+            st.markdown("**Edge Contrast Ratio (robust Sobel spread)**")
+            st.write(f"Noisy: {result.edge_contrast_noisy:.4f}")
+            st.write(f"kNN: {result.edge_contrast_knn:.4f}")
+            st.write(f"Average: {result.edge_contrast_average:.4f}")
+
+        st.markdown("**GLCM Parameter Comparison**")
+        metric_names = ["contrast", "dissimilarity", "homogeneity", "energy", "correlation"]
+        glcm_rows = []
+        for name in metric_names:
+            glcm_rows.append(
+                {
+                    "metric": name,
+                    "original": f"{result.glcm_original[name]:.5f}",
+                    "kNN": f"{result.glcm_knn[name]:.5f}",
+                    "average": f"{result.glcm_average[name]:.5f}",
+                    "kNN/original": f"{result.glcm_ratio_knn[name]:.4f}",
+                    "avg/original": f"{result.glcm_ratio_average[name]:.4f}",
+                    "kNN preserved": "Yes" if result.texture_verdict_knn[name] else "No",
+                    "avg preserved": "Yes" if result.texture_verdict_average[name] else "No",
+                }
+            )
+        st.table(glcm_rows)
+
+        knn_preserved = sum(1 for v in result.texture_verdict_knn.values() if v)
+        avg_preserved = sum(1 for v in result.texture_verdict_average.values() if v)
+        if knn_preserved > avg_preserved:
+            st.success(
+                f"Texturedness verdict: kNN preserves more GLCM metrics ({knn_preserved}/5) than averaging ({avg_preserved}/5)."
+            )
+        elif avg_preserved > knn_preserved:
+            st.success(
+                f"Texturedness verdict: averaging preserves more GLCM metrics ({avg_preserved}/5) than kNN ({knn_preserved}/5)."
+            )
+        else:
+            st.info(
+                f"Texturedness verdict: tie ({knn_preserved}/5 each). Use visual texture regions and edge ratios to break ties."
+            )
 
     if show_curve:
         # The curve helps explain why some k values are better than others.
